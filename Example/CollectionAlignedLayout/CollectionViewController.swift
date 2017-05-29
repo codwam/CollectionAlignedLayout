@@ -25,7 +25,7 @@ class CollectionViewController: UICollectionViewController {
         // ⚠️ width 尽量可能是预期最大的。如果是40， “aliqua.” 这一项会有问题
         let contentWidth = self.view.frame.width - 40
         layout.estimatedItemSize = CGSize(width: contentWidth, height: 40)
-        layout.horizontalAlignment = .left
+        layout.horizontalAlignment = .right
     }
 
     override func didReceiveMemoryWarning() {

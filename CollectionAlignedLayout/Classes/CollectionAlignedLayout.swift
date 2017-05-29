@@ -48,7 +48,7 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
         }
         
         switch self.horizontalAlignment {
-        case .left:
+        case .left, .right:
             return horizontalAlignLeft(with: layoutAttributes, in: rect)
         default:
             break
@@ -65,6 +65,8 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
         switch self.horizontalAlignment {
         case .left:
             return horizontalAlignLeft(with: layoutAttributes, at: indexPath)
+        case .right:
+            return horizontalAlignRight(with: layoutAttributes, at: indexPath)
         default:
             break
         }
@@ -113,7 +115,7 @@ fileprivate extension CollectionAlignedLayout {
         let isFirstItemInSection = indexPath.item == 0
         if isFirstItemInSection {
             itemAttributes.leftAlignFrame(with: sectionInset)
-            log("isFirstItemInSection indexPath: \(indexPath), currentFrame: \(itemAttributes.frame)")
+            log("\(#function) isFirstItemInSection indexPath: \(indexPath), currentFrame: \(itemAttributes.frame)")
             return itemAttributes
         }
         
@@ -124,16 +126,49 @@ fileprivate extension CollectionAlignedLayout {
         let contentWidth = collectionView!.frame.width - sectionInset.left - sectionInset.right
         var currentFrame = itemAttributes.frame
         let strecthedCurrentFrame = CGRect(x: sectionInset.left, y: currentFrame.minY, width: contentWidth, height: currentFrame.height)
+        
         let isFirstItemInRow = !previousFrame.intersects(strecthedCurrentFrame)
         if isFirstItemInRow {
             itemAttributes.leftAlignFrame(with: sectionInset)
-            log("isFirstItemInRow indexPath: \(indexPath), currentFrame: \(currentFrame)")
+            log("\(#function) isFirstItemInRow indexPath: \(indexPath), currentFrame: \(currentFrame)")
             return itemAttributes
         }
         
         currentFrame.origin.x = previousFrame.maxX + evaluateMinimumInteritemSpacingForSection(at: indexPath.section)
         itemAttributes.frame = currentFrame
-        log("indexPath: \(indexPath), currentFrame: \(currentFrame)")
+        log("\(#function) indexPath: \(indexPath), currentFrame: \(currentFrame)")
+        
+        return itemAttributes
+    }
+    
+    func horizontalAlignRight(with itemAttributes: UICollectionViewLayoutAttributes, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let sectionInset = evaluateSectionInsetForItem(at: indexPath.section)
+        
+        let contentWidth = collectionView!.frame.width
+        let isFirstItemInSection = indexPath.item == 0
+        if isFirstItemInSection {
+            itemAttributes.rightAlignFrame(with: contentWidth, sectionInset: sectionInset)
+            log("\(#function) isFirstItemInSection indexPath: \(indexPath), currentFrame: \(itemAttributes.frame)")
+            return itemAttributes
+        }
+        
+        let previousIndexPath = IndexPath(item: indexPath.item - 1, section: indexPath.section)
+        guard let previousFrame = self.layoutAttributesForItem(at: previousIndexPath)?.frame else {
+            return itemAttributes
+        }
+        var currentFrame = itemAttributes.frame
+        let strecthedCurrentFrame = CGRect(x: 0, y: currentFrame.minY, width: contentWidth, height: currentFrame.height)
+        
+        let isFirstItemInRow = !previousFrame.intersects(strecthedCurrentFrame)
+        if isFirstItemInRow {
+            itemAttributes.rightAlignFrame(with: contentWidth, sectionInset: sectionInset)
+            log("\(#function) isFirstItemInRow indexPath: \(indexPath), currentFrame: \(currentFrame)")
+            return itemAttributes
+        }
+        
+        currentFrame.origin.x = previousFrame.minX - evaluateMinimumInteritemSpacingForSection(at: indexPath.section) - currentFrame.width
+        itemAttributes.frame = currentFrame
+        log("\(#function) indexPath: \(indexPath), currentFrame: \(currentFrame)")
         
         return itemAttributes
     }
