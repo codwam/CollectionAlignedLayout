@@ -113,7 +113,7 @@ fileprivate extension CollectionAlignedLayout {
     
     func horizontalAlignCenter(with layoutAttributes: [UICollectionViewLayoutAttributes], in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         log("----- Align Center Begin -----")
-        var attributes = layoutAttributes.map {
+        let attributes = layoutAttributes.map {
             $0.copy()
         } as! [UICollectionViewLayoutAttributes]
 

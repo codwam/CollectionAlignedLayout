@@ -5,11 +5,25 @@
 [![License](https://img.shields.io/cocoapods/l/CollectionAlignedLayout.svg?style=flat)](http://cocoapods.org/pods/CollectionAlignedLayout)
 [![Platform](https://img.shields.io/cocoapods/p/CollectionAlignedLayout.svg?style=flat)](http://cocoapods.org/pods/CollectionAlignedLayout)
 
+CollectionAlignedLayout
+===================
+
+自定义 Layout 支持对齐格式（左、中、右），和 Decoration View。
+
+## TODO
+
+- [ ] 单元测试
+- [ ] 截图
+- [ ] 添加注释
+- [ ] verticalAlignment
+
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
 ## Requirements
+
+iOS8+
 
 ## Installation
 
@@ -17,7 +31,7 @@ CollectionAlignedLayout is available through [CocoaPods](http://cocoapods.org). 
 it, simply add the following line to your Podfile:
 
 ```ruby
-pod "CollectionAlignedLayout"
+pod 'CollectionAlignedLayout'
 ```
 
 ## Author
