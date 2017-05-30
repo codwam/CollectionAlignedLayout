@@ -31,7 +31,7 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
     open var verticalAlignment: VerticalAlignment = .justified
     
     open var isEnabledDebugLog: Bool = false
-
+    
     // MARK: - Init
     
     convenience init(horizontalAlignment: HorizontalAlignment = .justified, verticalAlignment: VerticalAlignment = .justified) {
@@ -50,6 +50,8 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
         switch self.horizontalAlignment {
         case .left, .right:
             return horizontalAlignLeft(with: layoutAttributes, in: rect)
+        case .center:
+            return horizontalAlignCenter(with: layoutAttributes, in: rect)
         default:
             break
         }
@@ -74,6 +76,10 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
         return layoutAttributes
     }
     
+    open override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return true
+    }
+    
     // MARK: - Public Methods
     
     // MARK: - Private Methods
@@ -82,7 +88,7 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
         guard isEnabledDebugLog else {
             return
         }
-        print(items)
+        print(items.first!)
     }
 
 }
@@ -92,15 +98,107 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
 fileprivate extension CollectionAlignedLayout {
     
     func horizontalAlignLeft(with layoutAttributes: [UICollectionViewLayoutAttributes], in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        var updateAttributes = layoutAttributes.map { $0.copy() } as! [UICollectionViewLayoutAttributes]
+        var updatedAttributes = layoutAttributes.map { $0.copy() } as! [UICollectionViewLayoutAttributes]
         for (index, attributes) in layoutAttributes.enumerated() {
             if attributes.representedElementKind == nil {
                 if let itemAttributes = self.layoutAttributesForItem(at: attributes.indexPath) {
-                    updateAttributes[index] = itemAttributes
+                    updatedAttributes[index] = itemAttributes
                 }
             }
         }
-        return updateAttributes
+        return updatedAttributes
+    }
+    
+    // Thanks https://stackoverflow.com/a/38254368
+    
+    func horizontalAlignCenter(with layoutAttributes: [UICollectionViewLayoutAttributes], in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+        log("----- Align Center Begin -----")
+        var attributes = layoutAttributes.map {
+            $0.copy()
+        } as! [UICollectionViewLayoutAttributes]
+
+        // Constants
+        let leftPadding: CGFloat = 8
+//        let interItemSpacing: CGFloat = 10
+        
+        // Tracking values
+        var leftMargin: CGFloat = leftPadding // Modified to determine origin.x for each item
+        var maxY: CGFloat = -1.0 // Modified to determine origin.y for each item
+        var rowSizes: [[CGFloat]] = [] // Tracks the starting and ending x-values for the first and last item in the row
+        var currentRow: Int = 0 // Tracks the current row
+        attributes.forEach { layoutAttribute in
+            log("++++ Center Loop First: indexPath: \(layoutAttribute.indexPath)")
+            log("First Before leftMargin: \(leftMargin), maxY: \(maxY), rowSizes: \(rowSizes), currentFrame: \(layoutAttribute.frame)")
+            let indexPath = layoutAttribute.indexPath
+            let leftPadding = evaluateSectionInsetForItem(at: indexPath.section).left
+            let interItemSpacing = evaluateMinimumInteritemSpacingForSection(at: indexPath.section)
+
+            // Each layoutAttribute represents its own item
+            if layoutAttribute.frame.origin.y >= maxY {
+                
+                // This layoutAttribute represents the left-most item in the row
+                leftMargin = leftPadding
+                
+                // Register its origin.x in rowSizes for use later
+                if rowSizes.count == 0 {
+                    // Add to first row
+                    rowSizes = [[leftMargin, 0]]
+                } else {
+                    // Append a new row
+                    rowSizes.append([leftMargin, 0])
+                    currentRow += 1
+                }
+                
+                log("First Update leftMargin: \(leftMargin)")
+            }
+            
+            layoutAttribute.frame.origin.x = leftMargin
+            
+            leftMargin += layoutAttribute.frame.width + interItemSpacing
+            maxY = max(layoutAttribute.frame.maxY, maxY)
+            
+            // Add right-most x value for last item in the row
+            rowSizes[currentRow][1] = leftMargin - interItemSpacing
+            
+            log("First After  leftMargin: \(leftMargin), maxY: \(maxY), rowSizes: \(rowSizes), currentFrame: \(layoutAttribute.frame)")
+        }
+        
+        // At this point, all cells are left aligned
+        // Reset tracking values and add extra left padding to center align entire row
+        leftMargin = leftPadding
+        maxY = -1.0
+        currentRow = 0
+        attributes.forEach { layoutAttribute in
+            log("----- Center Loop Second: indexPath: \(layoutAttribute.indexPath)")
+            log("Second Before leftMargin: \(leftMargin), maxY: \(maxY), rowSizes: \(rowSizes), currentFrame: \(layoutAttribute.frame)")
+            let indexPath = layoutAttribute.indexPath
+            let leftPadding = evaluateSectionInsetForItem(at: indexPath.section).left
+            let interItemSpacing = evaluateMinimumInteritemSpacingForSection(at: indexPath.section)
+            
+            // Each layoutAttribute is its own item
+            if layoutAttribute.frame.origin.y >= maxY {
+                
+                // This layoutAttribute represents the left-most item in the row
+                leftMargin = leftPadding
+                
+                // Need to bump it up by an appended margin
+                let rowWidth = rowSizes[currentRow][1] - rowSizes[currentRow][0] // last.x - first.x
+                let appendedMargin = (collectionView!.frame.width - leftPadding - rowWidth - leftPadding) / 2
+                leftMargin += appendedMargin
+                
+                currentRow += 1
+                log("Second Update leftMargin: \(leftMargin)")
+            }
+            
+            layoutAttribute.frame.origin.x = leftMargin
+            
+            leftMargin += layoutAttribute.frame.width + interItemSpacing
+            maxY = max(layoutAttribute.frame.maxY, maxY)
+            
+            log("Second After  leftMargin: \(leftMargin), maxY: \(maxY), rowSizes: \(rowSizes), currentFrame: \(layoutAttribute.frame)")
+        }
+        
+        return attributes
     }
     
 }

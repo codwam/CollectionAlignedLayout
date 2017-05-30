@@ -22,9 +22,9 @@ final class CollectionDataManager: NSObject {
         let text3 = "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda."
         var dataSource = [[String]]()
         dataSource.append(text1.components(separatedBy: " "))
-//        dataSource.append(text2.components(separatedBy: " "))
-//        dataSource.append(text3.components(separatedBy: " "))
-//         dataSource.append(["abcddddsfsdf", "sdfsdlfkjsdf", "sduiouioewr"])
+        dataSource.append(text2.components(separatedBy: " "))
+        dataSource.append(text3.components(separatedBy: " "))
+//         dataSource.append(["abcddddsfsdf", "jkljkljlksda", "xcnvxmbmv"])
 
         return dataSource
     }()

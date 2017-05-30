@@ -20,12 +20,12 @@ class CollectionViewController: UICollectionViewController {
         // Do any additional setup after loading the view.
         
         let layout = self.collectionViewLayout as! CollectionAlignedLayout
-        layout.isEnabledDebugLog = true
         layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         // ⚠️ width 尽量可能是预期最大的。如果是40， “aliqua.” 这一项会有问题
         let contentWidth = self.view.frame.width - 40
         layout.estimatedItemSize = CGSize(width: contentWidth, height: 40)
-        layout.horizontalAlignment = .right
+        layout.isEnabledDebugLog = true
+        layout.horizontalAlignment = .center
     }
 
     override func didReceiveMemoryWarning() {

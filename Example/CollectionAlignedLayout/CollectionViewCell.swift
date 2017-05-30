@@ -18,19 +18,20 @@ final class CollectionViewCell: UICollectionViewCell {
         
         bgImageView.layer.borderColor = UIColor.blue.cgColor
         bgImageView.layer.borderWidth = 1
+        
+        let sbv = UIView()
+        sbv.backgroundColor = UIColor(red: 217 / 255.0, green: 217 / 255.0, blue: 217 / 255.0, alpha: 1)
+        self.selectedBackgroundView = sbv
     }
-    
-//    override func prepareForReuse() {
-//        super.prepareForReuse()
-//        bgImageView.layer.cornerRadius = bgImageView.frame.height / 2
-//        bgImageView.layer.masksToBounds = true
-//    }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
         bgImageView.layer.cornerRadius = self.frame.height / 2
         bgImageView.layer.masksToBounds = true
+        
+        self.selectedBackgroundView?.layer.cornerRadius = self.frame.height / 2
+        self.selectedBackgroundView?.layer.masksToBounds = true
     }
     
 }
