@@ -22,7 +22,7 @@ public enum VerticalAlignment {
     case bottom
 }
 
-open class CollectionAlignedLayout: UICollectionViewFlowLayout {
+open class CollectionAlignedLayout: DecorationSectionLayout {
     
     // MARK: - Properties
     
@@ -34,7 +34,7 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
     
     // MARK: - Init
     
-    convenience init(horizontalAlignment: HorizontalAlignment = .justified, verticalAlignment: VerticalAlignment = .justified) {
+    public convenience init(horizontalAlignment: HorizontalAlignment = .justified, verticalAlignment: VerticalAlignment = .justified) {
         self.init()
         self.horizontalAlignment = horizontalAlignment
         self.verticalAlignment = verticalAlignment
@@ -63,7 +63,7 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
         guard let layoutAttributes = super.layoutAttributesForItem(at: indexPath)?.copy() as? UICollectionViewLayoutAttributes else {
             return nil
         }
-        
+
         switch self.horizontalAlignment {
         case .left:
             return horizontalAlignLeft(with: layoutAttributes, at: indexPath)
@@ -84,6 +84,14 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
     
     // MARK: - Private Methods
     
+    fileprivate func copyLayoutAttributes(layoutAttributes: [UICollectionViewLayoutAttributes]) -> [UICollectionViewLayoutAttributes] {
+        // 只可以 copy 需要修改的，其他 copy了会改变的
+        let updatedAttributes = layoutAttributes.map {
+            $0.representedElementCategory == .cell ? $0.copy() : $0
+        } as! [UICollectionViewLayoutAttributes]
+        return updatedAttributes
+    }
+    
     fileprivate func log(_ items: Any...) {
         guard isEnabledDebugLog else {
             return
@@ -98,7 +106,7 @@ open class CollectionAlignedLayout: UICollectionViewFlowLayout {
 fileprivate extension CollectionAlignedLayout {
     
     func horizontalAlignLeft(with layoutAttributes: [UICollectionViewLayoutAttributes], in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        var updatedAttributes = layoutAttributes.map { $0.copy() } as! [UICollectionViewLayoutAttributes]
+        var updatedAttributes = copyLayoutAttributes(layoutAttributes: layoutAttributes)
         for (index, attributes) in layoutAttributes.enumerated() {
             if attributes.representedElementKind == nil {
                 if let itemAttributes = self.layoutAttributesForItem(at: attributes.indexPath) {
@@ -113,9 +121,7 @@ fileprivate extension CollectionAlignedLayout {
     
     func horizontalAlignCenter(with layoutAttributes: [UICollectionViewLayoutAttributes], in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         log("----- Align Center Begin -----")
-        let attributes = layoutAttributes.map {
-            $0.copy()
-        } as! [UICollectionViewLayoutAttributes]
+        let attributes = copyLayoutAttributes(layoutAttributes: layoutAttributes)
 
         // Constants
         let leftPadding: CGFloat = 8
@@ -127,11 +133,15 @@ fileprivate extension CollectionAlignedLayout {
         var rowSizes: [[CGFloat]] = [] // Tracks the starting and ending x-values for the first and last item in the row
         var currentRow: Int = 0 // Tracks the current row
         attributes.forEach { layoutAttribute in
-            log("++++ Center Loop First: indexPath: \(layoutAttribute.indexPath)")
-            log("First Before leftMargin: \(leftMargin), maxY: \(maxY), rowSizes: \(rowSizes), currentFrame: \(layoutAttribute.frame)")
+            guard layoutAttribute.representedElementCategory == .cell else {
+                return
+            }
+
             let indexPath = layoutAttribute.indexPath
             let leftPadding = evaluateSectionInsetForItem(at: indexPath.section).left
             let interItemSpacing = evaluateMinimumInteritemSpacingForSection(at: indexPath.section)
+            log("++++ Center Loop First: indexPath: \(indexPath)")
+            log("First Before leftPadding: \(leftPadding), leftMargin: \(leftMargin), maxY: \(maxY), rowSizes: \(rowSizes), currentFrame: \(layoutAttribute.frame)")
 
             // Each layoutAttribute represents its own item
             if layoutAttribute.frame.origin.y >= maxY {
@@ -169,11 +179,15 @@ fileprivate extension CollectionAlignedLayout {
         maxY = -1.0
         currentRow = 0
         attributes.forEach { layoutAttribute in
-            log("----- Center Loop Second: indexPath: \(layoutAttribute.indexPath)")
-            log("Second Before leftMargin: \(leftMargin), maxY: \(maxY), rowSizes: \(rowSizes), currentFrame: \(layoutAttribute.frame)")
+            guard layoutAttribute.representedElementCategory == .cell else {
+                return
+            }
+
             let indexPath = layoutAttribute.indexPath
             let leftPadding = evaluateSectionInsetForItem(at: indexPath.section).left
             let interItemSpacing = evaluateMinimumInteritemSpacingForSection(at: indexPath.section)
+            log("----- Center Loop Second: indexPath: \(indexPath)")
+            log("Second Before leftPadding: \(leftPadding), leftMargin: \(leftMargin), maxY: \(maxY), rowSizes: \(rowSizes), currentFrame: \(layoutAttribute.frame)")
             
             // Each layoutAttribute is its own item
             if layoutAttribute.frame.origin.y >= maxY {

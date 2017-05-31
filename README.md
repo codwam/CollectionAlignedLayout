@@ -41,3 +41,7 @@ codwam, codwam@gmail.com
 ## License
 
 CollectionAlignedLayout is available under the MIT license. See the LICENSE file for more info.
+
+## Thanks
+
+[mokagio/UICollectionViewLeftAlignedLayout](https://github.com/mokagio/UICollectionViewLeftAlignedLayout/tree/master/UICollectionViewLeftAlignedLayout)

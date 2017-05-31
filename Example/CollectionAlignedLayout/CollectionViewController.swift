@@ -19,16 +19,21 @@ class CollectionViewController: UICollectionViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         
-        let layout = self.collectionViewLayout as! CollectionAlignedLayout
-        layout.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-        layout.minimumLineSpacing = 15
-        layout.minimumInteritemSpacing = 10
+        let layout = self.collectionViewLayout as? CollectionAlignedLayout
+        layout?.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        layout?.minimumLineSpacing = 15
+        layout?.minimumInteritemSpacing = 10
         // ⚠️ width 尽量可能是预期最大的。如果等于40， “aliqua.” 这一项会有问题
         let contentWidth = self.view.frame.width - 40
-        layout.estimatedItemSize = CGSize(width: contentWidth, height: 40)
-//        layout.scrollDirection = .horizontal
-//        layout.isEnabledDebugLog = true
-        layout.horizontalAlignment = .left
+        layout?.estimatedItemSize = CGSize(width: contentWidth, height: 40)
+//        layout?.scrollDirection = .horizontal
+//        layout?.isEnabledDebugLog = true
+        layout?.horizontalAlignment = .center
+        
+//        layout?.addHorizontalAlignment(.left, inSection: 0)
+        
+        collectionView?.backgroundColor = .black
+        layout?.registerDefaultDecorationView()
     }
 
     override func didReceiveMemoryWarning() {
