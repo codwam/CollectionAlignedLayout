@@ -12,6 +12,8 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
     
     /// hold the section full width.
     open var ignoreSectionInsetLeftRight = true
+    open var decorationSectionInset = UIEdgeInsets.zero
+    open var cornerRadius: CGFloat?
     
     public struct Constant {
         public static let allDecorationViewIndex = -1
@@ -153,6 +155,7 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
             } else if let allDecorationViewColor = self.allDecorationViewColor {
                 attributes.backgroundColor = allDecorationViewColor
             }
+            attributes.cornerRadius = self.cornerRadius
             decorationAttributes.append(attributes)
         }
         self.decorationAttributes = decorationAttributes
@@ -197,15 +200,17 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
             frame.size.height += sectionInset.top + sectionInset.bottom
         }
         
+        frame = frame.inset(by: self.decorationSectionInset)
+        
         return frame
     }
     
 }
 
 open class DecorationSectionLayoutAttributes: UICollectionViewLayoutAttributes {
-    
     open var backgroundColor: UIColor?
     
+    open var cornerRadius: CGFloat?
 }
 
 @objc(DecorationSectionView)
@@ -215,6 +220,13 @@ open class DecorationSectionView: UICollectionReusableView {
             let bgColor = layoutAttributes.backgroundColor
             if self.backgroundColor == nil || bgColor != nil {
                 self.backgroundColor = bgColor
+                if let cornerRadius = layoutAttributes.cornerRadius, cornerRadius > 0 {
+                    self.layer.cornerRadius = cornerRadius
+                    self.layer.masksToBounds = true
+                } else {
+                    self.layer.cornerRadius = 0
+                    self.layer.masksToBounds = false
+                }
             }
         }
     }

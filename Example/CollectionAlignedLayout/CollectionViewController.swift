@@ -23,6 +23,9 @@ class CollectionViewController: UICollectionViewController {
         layout?.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         layout?.minimumLineSpacing = 15
         layout?.minimumInteritemSpacing = 10
+        layout?.sectionInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
+        layout?.decorationSectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
+        layout?.cornerRadius = 20
         // ⚠️ width 尽量可能是预期最大的。如果等于40， “aliqua.” 这一项会有问题
         let contentWidth = self.view.frame.width - 40
         layout?.estimatedItemSize = CGSize(width: contentWidth, height: 40)
