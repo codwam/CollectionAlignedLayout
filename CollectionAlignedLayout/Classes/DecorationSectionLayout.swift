@@ -13,8 +13,8 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
     /// hold the section full width.
     open var ignoreSectionInsetLeftRight = true
     
-    fileprivate struct Constant {
-        static let allDecorationViewIndex = -1
+    public struct Constant {
+        public static let allDecorationViewIndex = -1
     }
     
     fileprivate var decorationAttributes = [DecorationSectionLayoutAttributes]()
@@ -109,8 +109,6 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
     open func addDecorationView(withBackgroundColor bgColor: UIColor, inSection section: Int = Constant.allDecorationViewIndex) {
         let className = "DecorationSectionView"
         self.registerDecorationView(withClassName: className, inSection: section)
-        
-        addDecorationView(withBackgroundColor: bgColor, inSection: section)
         
         if section == Constant.allDecorationViewIndex {
             self.allDecorationViewColor = bgColor
@@ -212,7 +210,6 @@ open class DecorationSectionLayoutAttributes: UICollectionViewLayoutAttributes {
 
 @objc(DecorationSectionView)
 open class DecorationSectionView: UICollectionReusableView {
-    
     override open func apply(_ layoutAttributes: UICollectionViewLayoutAttributes) {
         if let layoutAttributes = layoutAttributes as? DecorationSectionLayoutAttributes {
             let bgColor = layoutAttributes.backgroundColor
@@ -221,7 +218,4 @@ open class DecorationSectionView: UICollectionReusableView {
             }
         }
     }
-    
 }
-
-
