@@ -1,6 +1,6 @@
 PODS:
   - CollectionAlignedLayout (0.2.0)
-  - Nimble (8.0.9)
+  - Nimble (9.2.1)
   - Quick (2.2.0)
 
 DEPENDENCIES:
@@ -18,10 +18,10 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  CollectionAlignedLayout: 96ab60022d971b522855a90c784074f29af22cb3
-  Nimble: 98b888285a615fd34f20e61753cf58ea1402bde4
+  CollectionAlignedLayout: 3e74ff188faf7984f0a3bfc3753ab8c7056bc74c
+  Nimble: e7e615c0335ee4bf5b0d786685451e62746117d5
   Quick: 7fb19e13be07b5dfb3b90d4f9824c855a11af40e
 
-PODFILE CHECKSUM: 08866db35a4bcae9b6b8f228f6f0a5123bab2637
+PODFILE CHECKSUM: 6ff1248356e6815fd865b27460a999cfc2d00998
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0
