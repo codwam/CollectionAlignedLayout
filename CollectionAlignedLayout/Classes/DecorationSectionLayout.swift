@@ -2,7 +2,7 @@
 //  DecorationSectionLayout.swift
 //  Pods
 //
-//  Created by 李辉 on 2017/5/30.
+//  Created by anon on 2017/5/30.
 //
 //
 
@@ -10,42 +10,26 @@ import UIKit
 
 open class DecorationSectionLayout: UICollectionViewFlowLayout {
     
-    /// hold the section full width.
-    open var ignoreSectionInsetLeftRight = true
-    open var decorationSectionInset = UIEdgeInsets.zero
-    open var cornerRadius: CGFloat?
-    
     public struct Constant {
-        public static let allDecorationViewIndex = -1
+        public static let commonDecorationViewIndex = -1
     }
     
+    fileprivate var commonAttributes: DecorationAttributes?
+    fileprivate var sectionToAttributes: [Int: DecorationAttributes]?
+
     fileprivate var decorationAttributes = [DecorationSectionLayoutAttributes]()
-    
-    fileprivate var allDecorationViewKind: String?
-    fileprivate var decorationViewKinds: [Int: String]?
-    
-    fileprivate var allDecorationViewColor: UIColor?
-    fileprivate var decorationViewColors: [Int: UIColor]?
     
     // MARK: - Override
     
     open override func prepare() {
         super.prepare()
         
-        if let decorationViewKinds = self.decorationViewKinds, decorationViewKinds.count > 0 {
-            configureDecorationAttributes()
-        }
+        configureDecorationAttributes()
     }
     
     open override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         guard let layoutAttributes = super.layoutAttributesForElements(in: rect) else {
             return nil
-        }
-        guard let decorationViewKinds = self.decorationViewKinds else {
-            return layoutAttributes
-        }
-        if decorationViewKinds.count == 0 {
-            return layoutAttributes
         }
         
         var tempAttributes = layoutAttributes.map { $0.copy() } as! [UICollectionViewLayoutAttributes]
@@ -73,53 +57,34 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
     
     // MARK: - Register Methods
     
-    // Add default white Color for all section
-
-    open func registerDefaultDecorationView() {
-        addDecorationView(withBackgroundColor: UIColor.white)
-    }
-    
-    // Add by custom class
-    
-    open func registerDecorationView(withClassName className: String, inSection section: Int = Constant.allDecorationViewIndex) {
-        let viewClass: AnyClass? = NSClassFromString(className)
-        register(viewClass, forDecorationViewOfKind: className)
+    open func registerDecorationView(_ viewClass: AnyClass?, inSection section: Int = Constant.commonDecorationViewIndex, updateAttributes: ((DecorationAttributes) -> Void)? = nil) {
+        guard let cls = viewClass else { return }
+        let className = NSStringFromClass(cls)
+        register(cls, forDecorationViewOfKind: className)
         
-        addDecorationView(withViewName: className, inSection: section)
+        registerDecorationView(withViewName: className, inSection: section, updateAttributes: updateAttributes)
     }
     
-    open func registerDecorationView(withNibName nibName: String, inSection section: Int = Constant.allDecorationViewIndex) {
+    open func registerDecorationView(_ nibName: String, inSection section: Int = Constant.commonDecorationViewIndex) {
         let nib = UINib(nibName: nibName, bundle: nil)
         register(nib, forDecorationViewOfKind: nibName)
         
-        addDecorationView(withViewName: nibName, inSection: section)
+        registerDecorationView(withViewName: nibName, inSection: section)
     }
     
-    fileprivate func addDecorationView(withViewName viewName: String, inSection section: Int) {
-        if section == Constant.allDecorationViewIndex {
-            self.allDecorationViewKind = viewName
+    fileprivate func registerDecorationView(withViewName viewName: String, inSection section: Int, updateAttributes: ((DecorationAttributes) -> Void)? = nil) {
+        let attri = DecorationAttributes(decorationViewOfKind: viewName)
+        updateAttributes?(attri)
+        
+        if section == Constant.commonDecorationViewIndex {
+            self.commonAttributes = attri
+            return
         }
         
-        if self.decorationViewKinds == nil {
-            self.decorationViewKinds = [Int: String]()
+        if self.sectionToAttributes == nil {
+            self.sectionToAttributes = [Int: DecorationAttributes]()
         }
-        self.decorationViewKinds![section] = viewName
-    }
-    
-    // Add by custom color
-
-    open func addDecorationView(withBackgroundColor bgColor: UIColor, inSection section: Int = Constant.allDecorationViewIndex) {
-        let className = "DecorationSectionView"
-        self.registerDecorationView(withClassName: className, inSection: section)
-        
-        if section == Constant.allDecorationViewIndex {
-            self.allDecorationViewColor = bgColor
-        }
-        
-        if self.decorationViewColors == nil {
-            self.decorationViewColors = [Int: UIColor]()
-        }
-        self.decorationViewColors![section] = bgColor
+        self.sectionToAttributes![section] = attri
     }
     
     // MARK: - Private Methods
@@ -132,30 +97,25 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
         var decorationAttributes = [DecorationSectionLayoutAttributes]()
         
         for section in 0..<numberOfSection {
-            var decorationViewOfKind = decorationViewKinds?[section]
-            if decorationViewOfKind == nil {
-                decorationViewOfKind = self.allDecorationViewKind
+            var attriOP = sectionToAttributes?[section]
+            if attriOP == nil {
+                attriOP = self.commonAttributes
             }
             // no decorationViewOfKind will skip
-            if decorationViewOfKind == nil {
+            guard let attri = attriOP else {
                 continue
             }
             
-            let sectionFrame = self.frameOfSectionView(inSection: section)
+            let sectionFrame = frameOfSectionView(inSection: section)
             if sectionFrame.isEmpty {
                 continue
             }
             
-            let attributes = DecorationSectionLayoutAttributes(forDecorationViewOfKind: decorationViewOfKind!, with: IndexPath(row: 0, section: section))
-            attributes.zIndex = -1
+            let attributes = DecorationSectionLayoutAttributes(forDecorationViewOfKind: attri.decorationViewOfKind, with: IndexPath(row: 0, section: section))
+            attributes.zIndex = -2
             attributes.frame = sectionFrame
-            let bgColor = self.decorationViewColors?[section]
-            if let bgColor = bgColor {
-                attributes.backgroundColor = bgColor
-            } else if let allDecorationViewColor = self.allDecorationViewColor {
-                attributes.backgroundColor = allDecorationViewColor
-            }
-            attributes.cornerRadius = self.cornerRadius
+            attributes.backgroundColor = attri.backgroundColor
+            attributes.cornerRadius = attri.cornerRadius
             decorationAttributes.append(attributes)
         }
         self.decorationAttributes = decorationAttributes
@@ -185,11 +145,7 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
         }
         
         var frame = firstItem.frame.union(lastItem.frame)
-        if self.ignoreSectionInsetLeftRight {
-            frame.origin.x = 0
-        } else {
-            frame.origin.x -= sectionInset.left
-        }
+        frame.origin.x -= sectionInset.left
         frame.origin.y -= sectionInset.top
         
         if (self.scrollDirection == .horizontal) {
@@ -200,11 +156,25 @@ open class DecorationSectionLayout: UICollectionViewFlowLayout {
             frame.size.height += sectionInset.top + sectionInset.bottom
         }
         
-        frame = frame.inset(by: self.decorationSectionInset)
-        
         return frame
     }
     
+}
+
+// MARK: - support
+
+open class DecorationAttributes {
+    open var decorationViewOfKind: String
+    
+    open var backgroundColor: UIColor?
+    
+    open var cornerRadius: CGFloat?
+    
+//    open var decorationSectionInset = UIEdgeInsets.zero
+    
+    init(decorationViewOfKind: String) {
+        self.decorationViewOfKind = decorationViewOfKind
+    }
 }
 
 open class DecorationSectionLayoutAttributes: UICollectionViewLayoutAttributes {

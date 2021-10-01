@@ -17,26 +17,32 @@ class CollectionViewController: UICollectionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
+        collectionView?.backgroundColor = .white
+
         let layout = self.collectionViewLayout as? CollectionAlignedLayout
         layout?.sectionInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
         layout?.minimumLineSpacing = 15
         layout?.minimumInteritemSpacing = 10
         layout?.sectionInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
-        layout?.decorationSectionInset = UIEdgeInsets(top: 0, left: 15, bottom: 0, right: 15)
-        layout?.cornerRadius = 20
-        // ⚠️ width 尽量可能是预期最大的。如果等于40， “aliqua.” 这一项会有问题
         let contentWidth = self.view.frame.width - 40
         layout?.estimatedItemSize = CGSize(width: contentWidth, height: 40)
 //        layout?.scrollDirection = .horizontal
 //        layout?.isEnabledDebugLog = true
         layout?.horizontalAlignment = .center
         
-//        layout?.addHorizontalAlignment(.left, inSection: 0)
-        
-        collectionView?.backgroundColor = .black
-        layout?.registerDefaultDecorationView()
+        layout?.registerDecorationView(DecorationSectionView.self, inSection: CollectionAlignedLayout.Constant.commonDecorationViewIndex, updateAttributes: { attr in
+            attr.backgroundColor = UIColor.white
+        })
+        layout?.registerDecorationView(DecorationSectionView.self, inSection: 0, updateAttributes: { attr in
+            attr.backgroundColor = UIColor.yellow
+        })
+        layout?.registerDecorationView(DecorationSectionView.self, inSection: 1, updateAttributes: { attr in
+            attr.backgroundColor = UIColor.green
+        })
+        layout?.registerDecorationView(DecorationSectionView.self, inSection: 2, updateAttributes: { attr in
+            attr.backgroundColor = UIColor.red
+        })
     }
 
     override func didReceiveMemoryWarning() {

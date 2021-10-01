@@ -2,20 +2,20 @@
 //  CollectionAlignedLayout.swift
 //  Pods
 //
-//  Created by 李辉 on 2017/5/28.
+//  Created by anon on 2017/5/28.
 //
 //
 
 import UIKit
 
-public enum HorizontalAlignment {
+public enum HorizontalAlignment: Int {
     case justified
     case left
     case center
     case right
 }
 
-public enum VerticalAlignment {
+public enum VerticalAlignment: Int {
     case justified
     case top
     case center
@@ -49,7 +49,7 @@ open class CollectionAlignedLayout: DecorationSectionLayout {
         
         switch self.horizontalAlignment {
         case .left, .right:
-            return horizontalAlignLeft(with: layoutAttributes, in: rect)
+            return horizontalAlignLeftOrRight(with: layoutAttributes, in: rect)
         case .center:
             return horizontalAlignCenter(with: layoutAttributes, in: rect)
         default:
@@ -85,7 +85,6 @@ open class CollectionAlignedLayout: DecorationSectionLayout {
     // MARK: - Private Methods
     
     fileprivate func copyLayoutAttributes(layoutAttributes: [UICollectionViewLayoutAttributes]) -> [UICollectionViewLayoutAttributes] {
-        // 只可以 copy 需要修改的，其他 copy了会改变的
         let updatedAttributes = layoutAttributes.map {
             $0.representedElementCategory == .cell ? $0.copy() : $0
         } as! [UICollectionViewLayoutAttributes]
@@ -101,11 +100,11 @@ open class CollectionAlignedLayout: DecorationSectionLayout {
 
 }
 
-// MARK: - Alignment Rect
+// MARK: - Alignment in Rect
 
 fileprivate extension CollectionAlignedLayout {
     
-    func horizontalAlignLeft(with layoutAttributes: [UICollectionViewLayoutAttributes], in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
+    func horizontalAlignLeftOrRight(with layoutAttributes: [UICollectionViewLayoutAttributes], in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         var updatedAttributes = copyLayoutAttributes(layoutAttributes: layoutAttributes)
         for (index, attributes) in layoutAttributes.enumerated() {
             if attributes.representedElementKind == nil {
@@ -118,14 +117,12 @@ fileprivate extension CollectionAlignedLayout {
     }
     
     // Thanks https://stackoverflow.com/a/38254368
-    
     func horizontalAlignCenter(with layoutAttributes: [UICollectionViewLayoutAttributes], in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
         log("----- Align Center Begin -----")
         let attributes = copyLayoutAttributes(layoutAttributes: layoutAttributes)
 
         // Constants
         let leftPadding: CGFloat = 8
-//        let interItemSpacing: CGFloat = 10
         
         // Tracking values
         var leftMargin: CGFloat = leftPadding // Modified to determine origin.x for each item
@@ -217,7 +214,7 @@ fileprivate extension CollectionAlignedLayout {
     
 }
 
-// MARK: - Alignment IndexPath
+// MARK: - Alignment at IndexPath
 
 fileprivate extension CollectionAlignedLayout {
     

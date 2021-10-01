@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="d3S-No-NsA">
-    <device id="retina4_7" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19162" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="d3S-No-NsA">
+    <device id="retina4_7" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19144"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -22,32 +20,30 @@
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5xo-Zz-rjV">
-                                <rect key="frame" x="0.0" y="567" width="375" height="100"/>
+                                <rect key="frame" x="0.0" y="603" width="375" height="64"/>
                                 <subviews>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="snI-PV-O8g">
-                                        <rect key="frame" x="127" y="8" width="121" height="29"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                    <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="snI-PV-O8g">
+                                        <rect key="frame" x="50" y="16.5" width="275" height="32"/>
                                         <segments>
-                                            <segment title="First"/>
-                                            <segment title="Second"/>
+                                            <segment title="justified"/>
+                                            <segment title="left"/>
+                                            <segment title="center"/>
+                                            <segment title="right"/>
                                         </segments>
-                                    </segmentedControl>
-                                    <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="0" translatesAutoresizingMaskIntoConstraints="NO" id="eG1-um-42k">
-                                        <rect key="frame" x="127" y="53" width="121" height="29"/>
-                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <segments>
-                                            <segment title="First"/>
-                                            <segment title="Second"/>
-                                        </segments>
+                                        <connections>
+                                            <action selector="onSegmentValueChanged:" destination="vXZ-lx-hvc" eventType="valueChanged" id="8HT-ml-8UH"/>
+                                        </connections>
                                     </segmentedControl>
                                 </subviews>
-                                <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                                <color key="backgroundColor" systemColor="groupTableViewBackgroundColor"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="100" id="0T6-3X-pJY"/>
+                                    <constraint firstItem="snI-PV-O8g" firstAttribute="centerX" secondItem="5xo-Zz-rjV" secondAttribute="centerX" id="H19-4Q-FyX"/>
+                                    <constraint firstItem="snI-PV-O8g" firstAttribute="centerY" secondItem="5xo-Zz-rjV" secondAttribute="centerY" id="Pfq-3f-S1C"/>
+                                    <constraint firstAttribute="height" constant="64" id="q3q-cN-rii"/>
                                 </constraints>
                             </view>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="y3J-Xa-3Vy">
-                                <rect key="frame" x="0.0" y="64" width="375" height="503"/>
+                                <rect key="frame" x="0.0" y="44" width="375" height="559"/>
                                 <connections>
                                     <segue destination="sUj-yd-UBH" kind="embed" id="YJY-5H-n3T"/>
                                 </connections>
@@ -55,16 +51,19 @@
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="y3J-Xa-3Vy" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="8CZ-ij-My3"/>
-                            <constraint firstAttribute="trailing" secondItem="y3J-Xa-3Vy" secondAttribute="trailing" id="Mze-3w-mEr"/>
-                            <constraint firstItem="5xo-Zz-rjV" firstAttribute="top" secondItem="y3J-Xa-3Vy" secondAttribute="bottom" id="PhQ-Fq-PLO"/>
-                            <constraint firstItem="5xo-Zz-rjV" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="cla-aI-Gbo"/>
-                            <constraint firstItem="y3J-Xa-3Vy" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="flw-AW-rAb"/>
-                            <constraint firstAttribute="trailing" secondItem="5xo-Zz-rjV" secondAttribute="trailing" id="gbY-K3-6Va"/>
-                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="5xo-Zz-rjV" secondAttribute="bottom" id="kWu-NC-cCz"/>
+                            <constraint firstItem="5xo-Zz-rjV" firstAttribute="top" secondItem="y3J-Xa-3Vy" secondAttribute="bottom" id="Eeg-LS-TjO"/>
+                            <constraint firstItem="2fi-mo-0CV" firstAttribute="top" secondItem="5xo-Zz-rjV" secondAttribute="bottom" id="Mhi-2i-N2n"/>
+                            <constraint firstItem="y3J-Xa-3Vy" firstAttribute="top" secondItem="jyV-Pf-zRb" secondAttribute="bottom" id="Ozc-N1-Fwk"/>
+                            <constraint firstItem="5xo-Zz-rjV" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="P8M-I1-KjD"/>
+                            <constraint firstItem="y3J-Xa-3Vy" firstAttribute="leading" secondItem="kh9-bI-dsS" secondAttribute="leading" id="kjT-Gf-rb5"/>
+                            <constraint firstAttribute="trailing" secondItem="y3J-Xa-3Vy" secondAttribute="trailing" id="vOA-nL-Otx"/>
+                            <constraint firstAttribute="trailing" secondItem="5xo-Zz-rjV" secondAttribute="trailing" id="w9j-N5-puY"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="CollectionAlignedLayout" id="MDE-A6-8zC"/>
+                    <connections>
+                        <outlet property="segmentedControl" destination="snI-PV-O8g" id="Qae-M2-Liv"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
             </objects>
@@ -150,4 +149,9 @@
             <point key="canvasLocation" x="118" y="35"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="groupTableViewBackgroundColor">
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
